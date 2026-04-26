@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
-import { Toaster } from "sonner";
-import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
-
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from "@/components/ui/sonner";
+import { ClerkProvider } from "@clerk/nextjs";
+import { TRPCReactProvider } from "@/trcp/client";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,8 +18,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Lura',
-    template: '%s | Lura'
+    default: "Resonance",
+    template: "%s | Resonance"
   },
   description: "AI-powered text-to-speech and voice cloning platform",
 };
@@ -30,14 +31,18 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${inter.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-          <Toaster />
-        </body>
-      </html>
+      <TRPCReactProvider>
+        <html lang="en">
+          <body
+            className={`${inter.variable} ${geistMono.variable} antialiased`}
+          >
+            <NuqsAdapter>
+              {children}
+            </NuqsAdapter>
+            <Toaster />
+          </body>
+        </html>
+      </TRPCReactProvider>
     </ClerkProvider>
   );
 }
