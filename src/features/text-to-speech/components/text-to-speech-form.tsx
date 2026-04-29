@@ -26,8 +26,8 @@ export const defaultTTSValues: TTSFormValues = {
   voiceId: "",
   temperature: 0.8,
   topP: 0.95,
-  topK: 1000,
-  repetitionPenalty: 1.2,
+  topK: 50,
+  repetitionPenalty: 1.1,
 };
 
 export const ttsFormOptions = formOptions({
@@ -43,8 +43,11 @@ export function TextToSpeechForm({
 }) {
   const trpc = useTRPC();
   const router = useRouter();
+  const createMutation = useMutation(
+    trpc.generations.create.mutationOptions({}),
+  );
 
-  const { checkout } = useCheckout();
+  //const { checkout } = useCheckout();
 
   const form = useAppForm({
     ...ttsFormOptions,
@@ -54,7 +57,7 @@ export function TextToSpeechForm({
     },
     onSubmit: async ({ value }) => {
       try {
-        /* const data = await createMutation.mutateAsync({
+        const data = await createMutation.mutateAsync({
           text: value.text.trim(),
           voiceId: value.voiceId,
           temperature: value.temperature,
@@ -64,12 +67,14 @@ export function TextToSpeechForm({
         });
 
         toast.success("Audio generated successfully!");
-        router.push(`/text-to-speech/${data.id}`); */
+        router.push(`/text-to-speech/${data.id}`);
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Failed to generate audio";
 
-        if (message === "SUBSCRIPTION_REQUIRED") {
+          toast.error(message);
+
+        /* if (message === "SUBSCRIPTION_REQUIRED") {
           toast.error("Subscription required", {
             action: {
               label: "Subscribe",
@@ -78,7 +83,7 @@ export function TextToSpeechForm({
           });
         } else {
           toast.error(message);
-        }
+        } */
       }
     },
   });
